@@ -31,6 +31,7 @@ public class BuilderScreen extends Screen {
     private static String message = "";
     private static int page = 0;
     private static int rotIndex = 0;
+    private static boolean survival = false;
     private static int directSpeed = 10;   // blocks per second
     private static int commandSpeed = 2;   // commands per second
     private static String xs = "", ys = "", zs = "";
@@ -92,10 +93,17 @@ public class BuilderScreen extends Screen {
         addDrawableChild(ButtonWidget.builder(Text.literal("Here"), b -> useMyPosition())
                 .dimensions(x0 + 168, 80, Math.max(30, rw - 168), 20).build());
 
+        int halfW = (rw - 4) / 2;
         addDrawableChild(ButtonWidget.builder(Text.literal("Rotation: " + ROT_DEG[rotIndex] + "°"), b -> {
             rotIndex = (rotIndex + 1) % ROTS.length;
             clearAndInit();
-        }).dimensions(x0, 106, rw, 20).build());
+        }).dimensions(x0, 106, halfW, 20).build());
+        ButtonWidget survBtn = ButtonWidget.builder(
+                Text.literal(directMode() ? "Survival: " + (survival ? "ON" : "OFF") : "Survival: n/a"),
+                b -> { survival = !survival; clearAndInit(); })
+                .dimensions(x0 + halfW + 4, 106, halfW, 20).build();
+        survBtn.active = directMode();
+        addDrawableChild(survBtn);
 
         addDrawableChild(new SpeedSlider(x0, 130, rw, 20));
 
@@ -160,7 +168,7 @@ public class BuilderScreen extends Screen {
                     Integer.parseInt(yField.getText().trim()),
                     Integer.parseInt(zField.getText().trim()));
             int speed = directMode() ? directSpeed : commandSpeed;
-            BuildManager.start(client, loaded, origin, ROTS[rotIndex], speed);
+            BuildManager.start(client, loaded, origin, ROTS[rotIndex], speed, survival);
             close();
         } catch (NumberFormatException e) {
             message = "Coordinates must be whole numbers";
@@ -168,10 +176,20 @@ public class BuilderScreen extends Screen {
     }
 
     @Override
+    public void renderBackground(DrawContext ctx, int mouseX, int mouseY, float delta) {
+        super.renderBackground(ctx, mouseX, mouseY, delta);
+        int purple = 0xFFA020F0;
+        ctx.fill(4, 4, 176, height - 4, 0xD0140A24);
+        ctx.fill(4, 4, 176, 6, purple);
+        ctx.fill(184, 4, Math.min(width - 4, 424), height - 4, 0xD0140A24);
+        ctx.fill(184, 4, Math.min(width - 4, 424), 6, purple);
+    }
+
+    @Override
     public void render(DrawContext ctx, int mouseX, int mouseY, float delta) {
         super.render(ctx, mouseX, mouseY, delta);
         int white = 0xFFFFFFFF, grey = 0xFFAAAAAA, red = 0xFFFF5555, green = 0xFF55FF55;
-        ctx.drawCenteredTextWithShadow(textRenderer, title, width / 2, 14, white);
+        ctx.drawCenteredTextWithShadow(textRenderer, title, width / 2, 14, 0xFFC77DFF);
         ctx.drawTextWithShadow(textRenderer, Text.literal("Put .nbt / .schem files in: .minecraft/schematics"), 10, 26, grey);
 
         int x0 = 190;
@@ -188,7 +206,7 @@ public class BuilderScreen extends Screen {
         ctx.drawTextWithShadow(textRenderer, Text.literal("Corner position  X          Y          Z"), x0, 68, grey);
 
         ctx.drawTextWithShadow(textRenderer, Text.literal(directMode()
-                ? "Mode: Direct (singleplayer, no cheats needed)"
+                ? (survival ? "Mode: Survival (uses your inventory)" : "Mode: Direct (singleplayer, creative-style)")
                 : "Mode: Commands (needs OP, slow)"), x0, 206, directMode() ? green : 0xFFFFAA00);
         ctx.drawTextWithShadow(textRenderer, Text.literal(BuildManager.status()), x0, 218, white);
         if (!message.isEmpty()) {
