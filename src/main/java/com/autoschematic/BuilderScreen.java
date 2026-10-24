@@ -31,7 +31,7 @@ public class BuilderScreen extends Screen {
     private static String message = "";
     private static int page = 0;
     private static int rotIndex = 0;
-    private static int directSpeed = 50;   // blocks per tick
+    private static int directSpeed = 10;   // blocks per second
     private static int commandSpeed = 2;   // commands per second
     private static String xs = "", ys = "", zs = "";
 
@@ -203,7 +203,7 @@ public class BuilderScreen extends Screen {
         }
 
         private static int min() { return 1; }
-        private static int max() { return directMode() ? 500 : 20; }
+        private static int max() { return directMode() ? 200 : 20; }
 
         private static double initial() {
             int v = directMode() ? directSpeed : commandSpeed;
@@ -213,7 +213,7 @@ public class BuilderScreen extends Screen {
         @Override
         protected void updateMessage() {
             int v = current();
-            setMessage(Text.literal(directMode() ? "Speed: " + v + " blocks/tick" : "Speed: " + v + " commands/sec"));
+            setMessage(Text.literal(directMode() ? "Speed: " + v + " blocks/sec" : "Speed: " + v + " commands/sec"));
         }
 
         private int current() {

@@ -36,6 +36,7 @@ public final class BuildManager {
     private static int total;
     private static int speed;
     private static int tickCounter;
+    private static double accumulator;
     private static int msgCounter;
     private static String schematicName = "";
 
@@ -55,7 +56,7 @@ public final class BuildManager {
     }
 
     /**
-     * @param speed direct mode: blocks per tick; command mode: commands per second (1-20)
+     * @param speed direct mode: blocks per second; command mode: commands per second (1-20)
      */
     public static void start(MinecraftClient client, Schematic s, BlockPos origin, BlockRotation rot, int speed) {
         // Rotate, then normalise so the schematic's min corner sits on `origin`.
@@ -85,6 +86,7 @@ public final class BuildManager {
         total = direct ? list.size() : commands.size();
         index = 0;
         tickCounter = 0;
+        accumulator = 0;
         msgCounter = 0;
         schematicName = s.name;
         paused = false;
@@ -120,17 +122,22 @@ public final class BuildManager {
                 running = false;
                 return;
             }
-            int end = Math.min(index + speed, total);
-            List<Placement> batch = new ArrayList<>(queue.subList(index, end));
-            index = end;
-            RegistryKey<World> key = client.world.getRegistryKey();
-            server.execute(() -> {
-                ServerWorld w = server.getWorld(key);
-                if (w == null) return;
-                for (Placement p : batch) {
-                    w.setBlockState(p.pos(), p.state(), Block.NOTIFY_LISTENERS);
-                }
-            });
+            accumulator += speed / 20.0;
+            int count = (int) accumulator;
+            if (count > 0) {
+                accumulator -= count;
+                int end = Math.min(index + count, total);
+                List<Placement> batch = new ArrayList<>(queue.subList(index, end));
+                index = end;
+                RegistryKey<World> key = client.world.getRegistryKey();
+                server.execute(() -> {
+                    ServerWorld w = server.getWorld(key);
+                    if (w == null) return;
+                    for (Placement p : batch) {
+                        w.setBlockState(p.pos(), p.state(), Block.NOTIFY_LISTENERS);
+                    }
+                });
+            }
         } else {
             tickCounter++;
             int interval = Math.max(1, 20 / speed);
