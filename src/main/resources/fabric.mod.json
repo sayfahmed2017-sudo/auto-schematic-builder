@@ -1,18 +1,20 @@
 {
   "schemaVersion": 1,
-  "id": "autoschematic",
+  "id": "corz_builder",
   "version": "${version}",
-  "name": "Auto Schematic Builder",
-  "description": "Load .nbt / .schem schematics and build them automatically from an in-game GUI.",
-  "authors": ["You"],
+  "name": "CORZ Builder",
+  "description": "A purple-and-black client dashboard prototype with module toggles.",
+  "authors": ["CORZ"],
   "license": "MIT",
   "environment": "client",
   "entrypoints": {
-    "client": ["com.autoschematic.AutoSchematicClient"]
+    "client": [
+      "dev.corz.builder.CorzBuilderClient"
+    ]
   },
   "depends": {
     "fabricloader": ">=0.18.0",
-    "minecraft": "~1.21.11",
+    "minecraft": "1.21.11",
     "java": ">=21",
     "fabric-api": "*"
   }
