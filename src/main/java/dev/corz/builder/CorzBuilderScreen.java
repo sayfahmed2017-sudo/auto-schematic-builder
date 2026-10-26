@@ -1,5 +1,6 @@
 package dev.corz.builder;
 
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.components.Button;
@@ -36,8 +37,12 @@ public final class CorzBuilderScreen extends Screen {
             boolean enabled = modules.get(name);
             String label = name + "   [" + (enabled ? "ON" : "OFF") + "]";
             Button button = Button.builder(Component.literal(label), b -> {
-                modules.put(name, !modules.get(name));
-                rebuildWidgets();
+                if (name.equals("Auto Schematic Builder")) {
+                    Minecraft.getInstance().setScreen(new AutoBuilderScreen());
+                } else {
+                    modules.put(name, !modules.get(name));
+                    rebuildWidgets();
+                }
             }).bounds(left + 22, y, panelWidth - 44, cardHeight).build();
             addRenderableWidget(button);
             y += 45;
@@ -61,7 +66,7 @@ public final class CorzBuilderScreen extends Screen {
         graphics.drawString(this.font, "RIGHT SHIFT  •  MODULE SETTINGS", left + 22, top + 59, MUTED, false);
         super.render(graphics, mouseX, mouseY, partialTick);
         graphics.drawCenteredString(this.font,
-                "UI prototype — toggles do not automate gameplay",
+                "AutoBuilder opens the schematic browser",
                 this.width / 2, Math.min(this.height - 12, top + 286), MUTED);
     }
 

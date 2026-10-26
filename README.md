@@ -1,41 +1,25 @@
-# CORZ Builder — Fabric 1.21.11
+# CORZ Builder — Minecraft Java 1.21.11 (Fabric)
 
-A small client-side Fabric mod project with a CORZ-inspired purple/black menu.
+A client-side Fabric project targeting Minecraft **1.21.11** and Java 21. The CORZ purple/black dashboard opens with **Right Shift**.
 
-## Current features
-- Press **Right Shift** in Minecraft to open the menu.
-- Four visual toggles: Auto Schematic Builder, Aim Assist, Auto Crystal, Auto Anchors.
-- GitHub Actions builds a JAR on each push.
+## AutoBuilder browser (early implementation)
 
-**Important:** This starter project is a UI prototype. The four toggles only change their ON/OFF label; they do not implement automatic building or combat actions.
+- Opens the Minecraft instance's `schematics/donut/` folder (create it if needed).
+- Lists `.litematic` files and includes Open Folder, Refresh, selection, Previous/Next, and a Preview/Position information panel.
+- Performs basic file checks (size limit and gzip header) and reports errors instead of silently accepting unreadable files.
+- Includes a Materials panel that explicitly does not invent totals before a full schematic decoder is connected.
 
-## Build on GitHub
-1. Create a new GitHub repository.
-2. Extract this ZIP and upload the *contents* of this folder to the repository (so `build.gradle` and `gradle.properties` are at the repository root).
-3. Open the repository's **Actions** tab. The `Build Fabric mod` workflow should run.
-4. Open the completed workflow run and download the `corz-builder-jar` artifact.
-5. The actual mod JAR is inside that downloaded artifact.
+## Important implementation status
 
-## Publish to Modrinth
-1. Create a project on Modrinth and choose **Client-side**, **Fabric**, and Minecraft **1.21.11**.
-2. In GitHub repository Settings → Secrets and variables → Actions, add:
-   - `MODRINTH_TOKEN`: your Modrinth personal access token with permission to upload versions.
-   - `MODRINTH_PROJECT_ID`: the project ID from your Modrinth project.
-3. Run **Actions → Publish to Modrinth → Run workflow**.
+This ZIP is a **starter implementation**, not the complete automated builder described in the requested spec. Full compressed-NBT/Litematica decoding (including multiple regions), accurate block/material totals, a rotatable 3D render, world ghost rendering, transforms, dependency-aware placement, and per-placement world confirmation are not implemented yet. The UI labels this honestly; it does not claim to build a schematic or place blocks. Other dashboard module switches are visual toggles only.
 
-Publishing may require completing Modrinth's project checks. Review the file and metadata before publishing.
+## Build
 
-## Local build (optional)
-Install Java 21 and Gradle 9.2.1, open a terminal in the project folder, then run:
+1. Install a Java 21 JDK.
+2. Extract the whole ZIP so `settings.gradle`, `build.gradle`, `gradle.properties`, `.github/`, and `src/` are at the repository root.
+3. In that folder run `gradlew build` (Windows: `gradlew.bat build`; if the wrapper isn't present, open the project in IntelliJ IDEA with Gradle support).
+4. The JAR is written to `build/libs/`.
 
-```powershell
-gradle build
-```
+## Modrinth
 
-The built JAR will be in `build/libs/`.
-
-## Notes
-- Minecraft: Java Edition 1.21.11
-- Loader: Fabric
-- Requires Fabric API
-- Menu key: Right Shift
+Upload the built JAR as a client-side Fabric mod for Minecraft 1.21.11. Do not upload the source ZIP as the mod file. The included GitHub Actions workflows are templates; configure repository secrets before using automated publishing.
