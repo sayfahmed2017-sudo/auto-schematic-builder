@@ -1,8 +1,6 @@
 package net.autobuilder.schematic;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -17,7 +15,6 @@ public class LitematicParser {
     public static SchematicData parse(File file) {
         SchematicData data = new SchematicData();
         data.name = file.getName();
-        // Parsing logic placeholder for NBT structure decoding (.litematic format)
         data.width = 16;
         data.height = 16;
         data.length = 16;

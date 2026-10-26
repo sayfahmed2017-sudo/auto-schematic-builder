@@ -1,21 +1,22 @@
 {
   "schemaVersion": 1,
-  "id": "corz_builder",
+  "id": "autobuilder",
   "version": "${version}",
-  "name": "CORZ Builder",
-  "description": "A purple-and-black client dashboard prototype with module toggles.",
-  "authors": ["CORZ"],
+  "name": "AutoBuilder",
+  "description": "Schematic AutoBuilder client module for Minecraft 1.21.1",
+  "authors": ["Danyal"],
+  "contact": {},
   "license": "MIT",
+  "icon": "assets/autobuilder/icon.png",
   "environment": "client",
   "entrypoints": {
     "client": [
-      "dev.corz.builder.CorzBuilderClient"
+      "net.autobuilder.AutoBuilderMod"
     ]
   },
   "depends": {
-    "fabricloader": ">=0.18.0",
-    "minecraft": "1.21.11",
-    "java": ">=21",
-    "fabric-api": "*"
+    "fabricloader": ">=0.16.0",
+    "minecraft": "~1.21.1",
+    "java": ">=21"
   }
 }
